@@ -271,7 +271,7 @@ for(const side of[-1,1]){g.add(B(.05,.46,.57,glass,side*.91,1.67,.69),B(.04,.28,
 g.add(B(.08,.12,2.2,steel,-.91,2.54,-.72),B(.08,.12,2.2,steel,.91,2.54,-.72),B(.045,1.42,.08,steel,0,1.76,-2.12),B(.06,.09,2.7,steel,0,.87,-.72),B(.07,.08,2.7,steel,0,2.65,-.72));return g;}
 const roadUnits=[{x:7,d:1,s:3.6},{x:69,d:-1,s:3.1}].map(v=>{const g=kiaTruck();g.rotation.y=v.d>0?Math.PI/2:-Math.PI/2;g.position.set(v.x,0,48);roadTraffic.add(g);return{...v,g}});window.updateTraffic=dt=>{for(const v of roadUnits){v.g.position.x+=v.d*v.s*dt;if(v.d>0&&v.g.position.x>125)v.g.position.x=-65;if(v.d<0&&v.g.position.x< -65)v.g.position.x=125;}};
 // Timber utility poles and overhead wires run along the access street.
-const pole=M('#765f4a',.9),wireMat=M('#24272a',.5,.65),posts=[[-5,38],[24,38],[58,38],[91,38]];
+const pole=M('#765f4a',.9),wireMat=M('#24272a',.5,.65),posts=[[-5,38],[43,38],[58,38],[91,38]];
 function wire(pts,r){const c=new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(...p)));scene.add(new T.Mesh(new T.TubeGeometry(c,48,r,6,false),wireMat))}
 for(const [x,z] of posts){scene.add(C(.16,12.8,pole,x,6.4,z),B(1.5,.07,.07,pole,x,11.5,z));for(const y of[11.5,12.2,12.9])scene.add(B(1.8,.05,.05,pole,x,y,z))}
 for(const y of[11.5,12.15,12.8])wire(posts.map(([x,z],i)=>[x,y-.16*Math.sin(i*Math.PI/3),z]),.026);
