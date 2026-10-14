@@ -173,12 +173,12 @@ el.innerHTML=`Distance: <b>${last.toFixed(2)} m</b> (path ${tot.toFixed(2)} m)`+
 // ---------- cameras ----------
 let locked=false,yaw=0,pitch=0;const keys={};
 const fit=()=>{const t=Math.tan(camera.fov*Math.PI/360);return Math.max(36/(2*t),66/(camera.aspect*2*t))};
-function setCam(m){if(camMode==='walk'&&m!=='walk'){document.exitPointerLock&&document.exitPointerLock();camera.rotation.order='XYZ';$('#hint').style.display='none'}camMode=m;orbit.enabled=true;orbit.enableRotate=true;orbit.maxPolarAngle=Math.PI/2-.02;orbit.target.set(30,0,15);
+function setCam(m){live.visible=m!=='site';if(camMode==='walk'&&m!=='walk'){document.exitPointerLock&&document.exitPointerLock();camera.rotation.order='XYZ';$('#hint').style.display='none'}camMode=m;orbit.enabled=true;orbit.enableRotate=true;orbit.maxPolarAngle=Math.PI/2-.02;orbit.target.set(30,0,15);
 if(m!=='site'&&lay.roof){lay.roof=false;applyLayers()}
 if(m==='top'||m==='2d'){camera.fov=30;camera.updateProjectionMatrix();orbit.enableRotate=false;orbit.maxPolarAngle=Math.PI;camera.position.set(30,fit(),15.01);if(m==='2d'){lay.zones=true;sync()}}
 else if(m==='iso'){camera.fov=25;camera.updateProjectionMatrix();const d=fit()*.85;camera.position.set(30+d*.6,d*.55,15+d*.6)}
 else if(m==='orbit'){camera.fov=50;camera.updateProjectionMatrix();camera.position.set(30,32,52)}
-else if(m==='site'){camera.fov=48;camera.updateProjectionMatrix();camera.position.set(31,13.5,76);orbit.target.set(30,3,22);lay.roof=true;applyLayers();$('#left').style.display='none';$('#right').style.display='none'}
+else if(m==='site'){camera.fov=45;camera.updateProjectionMatrix();camera.position.set(31,5.5,69);orbit.target.set(30,4.2,24);lay.roof=true;applyLayers();$('#left').style.display='none';$('#right').style.display='none'}
 else if(m==='walk'){camera.fov=70;camera.updateProjectionMatrix();orbit.enabled=false;mode='view';setMode(0,'view');camera.rotation.order='YXZ';camera.position.set(24.6,1.7,28.5);yaw=0;pitch=0;camera.rotation.set(0,0,0);$('#hint').style.display='block';dom.requestPointerLock&&dom.requestPointerLock()}
 orbit.update();tbState()}
 document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===dom;$('#hint').style.display=camMode==='walk'&&!locked?'block':'none'});
