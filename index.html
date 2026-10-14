@@ -178,7 +178,7 @@ if(m!=='site'&&lay.roof){lay.roof=false;applyLayers()}
 if(m==='top'||m==='2d'){camera.fov=30;camera.updateProjectionMatrix();orbit.enableRotate=false;orbit.maxPolarAngle=Math.PI;camera.position.set(30,fit(),15.01);if(m==='2d'){lay.zones=true;sync()}}
 else if(m==='iso'){camera.fov=25;camera.updateProjectionMatrix();const d=fit()*.85;camera.position.set(30+d*.6,d*.55,15+d*.6)}
 else if(m==='orbit'){camera.fov=50;camera.updateProjectionMatrix();camera.position.set(30,32,52)}
-else if(m==='site'){camera.fov=48;camera.updateProjectionMatrix();camera.position.set(31,16,76);orbit.target.set(30,3,16);lay.roof=true;applyLayers()}
+else if(m==='site'){camera.fov=48;camera.updateProjectionMatrix();camera.position.set(31,16,76);orbit.target.set(30,3,16);lay.roof=true;applyLayers();$('#left').style.display='none';$('#right').style.display='none'}
 else if(m==='walk'){camera.fov=70;camera.updateProjectionMatrix();orbit.enabled=false;mode='view';setMode(0,'view');camera.rotation.order='YXZ';camera.position.set(24.6,1.7,28.5);yaw=0;pitch=0;camera.rotation.set(0,0,0);$('#hint').style.display='block';dom.requestPointerLock&&dom.requestPointerLock()}
 orbit.update();tbState()}
 document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===dom;$('#hint').style.display=camMode==='walk'&&!locked?'block':'none'});
@@ -345,14 +345,14 @@ g.scale.setScalar(.95);return g}
 function pose(g,s){const u=g.userData;if(!u.hp)return;u.hp[0].rotation.x=s;u.hp[1].rotation.x=-s;u.kn[0].rotation.x=Math.max(0,s)*1.3;u.kn[1].rotation.x=Math.max(0,-s)*1.3;const e=.15+Math.abs(s)*.5;u.sh[0].rotation.x=-s*.8;u.el[0].rotation.x=-e;if(!u.clip){u.sh[1].rotation.x=s*.8;u.el[1].rotation.x=-e}u.tor.rotation.y=s*.15;u.tor.rotation.z=s*.04}
 const VN=[{g:mkVan(1),x:-30,z:48,d:1},{g:mkVan(-1),x:80,z:44,d:-1}];VN.forEach(v=>scene.add(v.g));
 function vans(dt){for(const v of VN){v.x+=v.d*9*dt;if(v.x>110)v.x=-60;if(v.x<-60)v.x=110;v.g.position.set(v.x,0,v.z)}}
-const rigs=[[2,1,'TRK-2051','FL-01','Sam Haddad',0],[45.2,6,'TRK-2287','FL-02','Omar Khalid',9]].map(a=>{const g=mkTruck(),f=mkFl(a[3],a[4]);g.position.set(a[0],0,70);f.position.set(a[0],0,21.2);live.add(g,f);for(const dx of[-1.5,1.5]){const p=PO('x');p.position.set(a[0]+dx,0,23);live.add(p)}const pin=new T.Mesh(new T.ConeGeometry(.35,.9,12),new T.MeshBasicMaterial({color:0x2457d6}));pin.rotation.x=Math.PI;live.add(pin);return{x:a[0],bay:a[1],id:a[2],g,f,pin,s:'wait',t:0,delay:a[5],n:0,z:70}});
+const rigs=[[2,1,'TRK-2051','FL-01','Sam Haddad',0],[45.2,6,'TRK-2287','FL-02','Omar Khalid',9]].map(a=>{const g=mkTruck(),f=mkFl(a[3],a[4]);g.position.set(a[0],0,120);f.position.set(a[0],0,21.2);live.add(g,f);for(const dx of[-1.5,1.5]){const p=PO('x');p.position.set(a[0]+dx,0,23);live.add(p)}const pin=new T.Mesh(new T.ConeGeometry(.35,.9,12),new T.MeshBasicMaterial({color:0x2457d6}));pin.rotation.x=Math.PI;live.add(pin);return{x:a[0],bay:a[1],id:a[2],g,f,pin,s:'wait',t:0,delay:a[5],n:0,z:120}});
 const ang=(a,b)=>{const d=Math.atan2(Math.sin(b-a),Math.cos(b-a));return a+d*.15};
 function sim(dt){tt+=dt;agents(dt);for(const r of rigs){r.t+=dt;const f=r.f,u=f.userData.fl,sl=r.g.userData.sl;let st='Idle',tr=0,sp=0;
 if(r.s==='wait'){if(r.t>r.delay){r.s='arrive';r.t=0;sl.forEach(p=>p.visible=false);r.n=0;r.z=46}}
 else if(r.s==='arrive'){r.z=Math.max(24.9,r.z-Math.min(6,1+(r.z-24.9)*.6)*dt);if(r.z<=24.9){r.s='load';r.t=0}}
 else if(r.s==='load'){const trip=Math.floor(r.t/8),k=(r.t%8)/8;if(trip>=6){r.s='leave';r.t=0}else{r.n=trip+(k>.58?1:0);let z;if(k<.12){z=21.2;st='Picking pallet'}else if(k<.5){z=21.2+E((k-.12)/.38)*6.3;st='Loading truck';sp=6.3/3.04}else if(k<.6){z=27.5;st='Loading truck'}else{z=27.5-E((k-.6)/.4)*6.3;st='Returning';tr=Math.PI;sp=6.3/3.2}f.position.z=z;f.position.y=Math.min(1.02,Math.max(0,(z-24.4)*1.7));u.carry=k>=.12&&k<.6;if(u.lt!==trip){u.lt=trip;u.moves++}}}
 else if(r.s==='leave'){r.z+=Math.min(6,1+r.t*1.5)*dt;if(r.z>62){r.s='wait';r.t=0;r.delay=8;r.id='TRK-'+(2000+Math.floor(rnd(tt)*900))}}
-r.g.position.z=r.s==='wait'?70:r.z;if(r.s!=='load'){f.position.set(r.x,0,21.2);u.carry=false}
+r.g.position.z=r.s==='wait'?120:r.z;if(r.s!=='load'){f.position.set(r.x,0,21.2);u.carry=false}
 f.rotation.y=ang(f.rotation.y,tr);u.state=st;u.spd=sp*3.6;u.c.visible=u.carry;const tx=u.id+' · '+st;if(u.sp.userData.t!==tx){u.sp.userData.t=tx;u.sp.material.map=tagTex(tx);u.sp.material.needsUpdate=true}
 sl.forEach((p,i)=>p.visible=i<r.n);{const o=r.s==='load'?.22:1;r.g.userData.cm.forEach(m=>m.opacity+=(o-m.opacity)*.1)}r.pin.position.set(r.x-1.5,2.4+Math.sin(tt*3)*.25,23)}}
 // ---------- workers & patrol forklifts ----------
