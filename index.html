@@ -58,7 +58,7 @@ function layout(){const L=[],mk=(t,x,z,o={})=>{const f=DEF[t];L.push({id:t+'-'+(
 const gap=(hz,fx,c,w,k)=>{const x=hz?c:fx,z=hz?fx:c;if(k==='r'||k==='p')mk('roller',x,z,{w,l:.3,name:k==='p'?'Back Door':'Door '+(++d)});else if(k!=='o')mk('door',x,z,{w,rot:hz?0:90,open:k==='g'?-1.35:0,name:k==='g'?'Room G Door (inward)':k==='e'?'Main Office Entrance':'Door',c:k==='e'?'#8fc6e8':undefined})};
 const wl=(hz,fx,a,b,gs=[],h=3,t=.2)=>{gs.sort((p,q)=>p[0]-q[0]);let c=a;const seg=(s,e)=>{if(e-s>.05)mk('wall',hz?(s+e)/2:fx,hz?fx:(s+e)/2,{w:hz?e-s:t,l:hz?t:e-s,h,zone:'structure'})};for(const[g,w,k]of gs){seg(c,g-w/2);gap(hz,fx,g,w,k);c=g+w/2}seg(c,b)},H=(...a)=>wl(1,...a),V=(...a)=>wl(0,...a);
 const dl=[2,6,10,14,18].map(c=>[c,2.8,'r']),dr=[45.2,48.5,51.8,55.1,58.4].map(c=>[c,2.4,'r']);
-H(0,0,60,[[25,5,'p']],6,.3);V(0,0,30,[],6,.3);V(60,0,30,[],6,.3);H(24,0,20.2,dl,6,.3);H(24,43,60,dr,6,.3);
+H(0,0,60,[[25,5,'p']],6,.3);V(0,0,30,[],6,.3);V(60,0,30,[],6,.3);H(30,0,20.2,dl,6,.3);H(30,43,60,dr,6,.3);
 H(30,20.2,43,[[24.6,1.8,'e']]);V(20.2,21,30);V(43,21,30);H(21,20.2,43,[[40.6,1,'g']]);
 H(23.6,20.2,26.5,[[24.8,.9,'d']]);V(26.5,21,26.5);H(27,20.2,23.3);V(23.3,23.6,30,[[25.3,.8,'d'],[28.6,.8,'d']]);
 V(30.5,21,26.5);H(26.5,26.5,34.4,[[28.5,.9,'d'],[31.3,.9,'d']]);V(34.4,21,30,[[28,.9,'d']]);V(39.3,21,30);
@@ -178,7 +178,7 @@ if(m!=='site'&&lay.roof){lay.roof=false;applyLayers()}
 if(m==='top'||m==='2d'){camera.fov=30;camera.updateProjectionMatrix();orbit.enableRotate=false;orbit.maxPolarAngle=Math.PI;camera.position.set(30,fit(),15.01);if(m==='2d'){lay.zones=true;sync()}}
 else if(m==='iso'){camera.fov=25;camera.updateProjectionMatrix();const d=fit()*.85;camera.position.set(30+d*.6,d*.55,15+d*.6)}
 else if(m==='orbit'){camera.fov=50;camera.updateProjectionMatrix();camera.position.set(30,32,52)}
-else if(m==='site'){camera.fov=45;camera.updateProjectionMatrix();camera.position.set(31,5.5,69);orbit.target.set(30,4.2,24);lay.roof=true;applyLayers();$('#left').style.display='none';$('#right').style.display='none'}
+else if(m==='site'){camera.fov=45;camera.updateProjectionMatrix();camera.position.set(31,5.5,69);orbit.target.set(30,4.2,30);lay.roof=true;applyLayers();$('#left').style.display='none';$('#right').style.display='none'}
 else if(m==='walk'){camera.fov=70;camera.updateProjectionMatrix();orbit.enabled=false;mode='view';setMode(0,'view');camera.rotation.order='YXZ';camera.position.set(24.6,1.7,28.5);yaw=0;pitch=0;camera.rotation.set(0,0,0);$('#hint').style.display='block';dom.requestPointerLock&&dom.requestPointerLock()}
 orbit.update();tbState()}
 document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===dom;$('#hint').style.display=camMode==='walk'&&!locked?'block':'none'});
@@ -240,20 +240,20 @@ strips([[-260,41,320,41],[-260,54,320,54]],'#d8d1c2',scene,.006);for(let x=-260;
 const roofGroup=new T.Group();scene.add(roofGroup);window.gRoof=roofGroup;
 const sheet=M('#e1e2df',.58,.35),stone=M('#887c68',.92),rib=M('#b9bfbd',.5,.4),blue=M('#315d7b',.42,.45),dark=M('#41464a',.65,.25);
 function roof(x,w,z,depth){const c=x+w/2,y=8.55,e=6.15;for(const side of[-1,1]){const a=side<0?x:c,b=side<0?c:x+w,ya=side<0?e:y,yb=side<0?y:e,v=new Float32Array([a,ya,z,b,yb,z,b,yb,z+depth,a,ya,z+depth]),g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(v,3));g.setIndex([0,1,2,0,2,3]);g.computeVertexNormals();const m=new T.Mesh(g,new T.MeshStandardMaterial({color:'#d5d8d7',roughness:.44,metalness:.48,side:T.DoubleSide}));m.castShadow=m.receiveShadow=true;roofGroup.add(m);for(let q=z;q<=z+depth;q+=2){const l=B(Math.hypot(w/2,y-e),.04,.055,rib,(a+b)/2,(ya+yb)/2,q);l.rotation.z=Math.atan2(y-e,w/2);roofGroup.add(l)}}roofGroup.add(B(.14,.12,depth,blue,c,y+.03,z+depth/2));}
-function unit(x,w,z,depth,count){const c=x+w/2,front=z+depth;
+function unit(x,w,z,depth,count,doorCenters=null){const c=x+w/2,front=z+depth;
 // Stone lower façade and tall white corrugated upper cladding.
 scene.add(B(w,3.05,.18,stone,c,1.55,front+.04),B(w,.55,.22,stone,c,.28,front+.16),B(w,2.55,.16,sheet,c,4.825,front+.04));
 const face=new T.Shape();face.moveTo(x,6.1);face.lineTo(x+w,6.1);face.lineTo(c,8.55);face.closePath();const tri=new T.Mesh(new T.ShapeGeometry(face),sheet);tri.position.z=front+.14;scene.add(tri);
 for(let q=x+.35;q<x+w;q+=.68){const top=8.55-2.45*Math.abs(q-c)/(w/2);scene.add(B(.045,Math.max(.1,top-3.6),.07,rib,q,(top+3.6)/2,front+.16))}
 // Repeated shutter doors, blue jambs, corrugated steel, and shallow arched white canopies.
-for(let i=0;i<count;i++){const bay=w/count,px=x+bay*(i+.5),dw=Math.min(3.15,bay*.72);scene.add(B(dw,3.45,.2,dark,px,1.83,front+.25),B(.12,3.5,.24,blue,px-dw/2-.1,1.83,front+.25),B(.12,3.5,.24,blue,px+dw/2+.1,1.83,front+.25));for(let yy=.22;yy<3.4;yy+=.23)scene.add(B(dw-.1,.035,.025,M('#a8adb0',.6,.55),px,yy,front+.38));
+const doorBays=doorCenters?doorCenters.map((px,i)=>({px,bay:i<5?3.8:3.3})):Array.from({length:count},(_,i)=>({px:x+(i+.5)*w/count,bay:w/count}));for(const [i,{px,bay}]of doorBays.entries()){const dw=Math.min(3.15,bay*.72);scene.add(B(dw,3.45,.2,dark,px,1.83,front+.25),B(.12,3.5,.24,blue,px-dw/2-.1,1.83,front+.25),B(.12,3.5,.24,blue,px+dw/2+.1,1.83,front+.25));for(let yy=.22;yy<3.4;yy+=.23)scene.add(B(dw-.1,.035,.025,M('#a8adb0',.6,.55),px,yy,front+.38));
 const v=[],idx=[],n=16;for(let a=0;a<=n;a++){const u=a/n,xx=px+(u-.5)*bay*.96;for(let b=0;b<=8;b++){const f=b/8;v.push(xx,3.8+.5*Math.sin(Math.PI*u)-.24*f,front+.27+1.35*f)}}for(let a=0;a<n;a++)for(let b=0;b<8;b++){const k=a*9+b;idx.push(k,k+9,k+10,k,k+10,k+1)}const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(v,3));g.setIndex(idx);g.computeVertexNormals();const canopy=new T.Mesh(g,new T.MeshStandardMaterial({color:'#e7e6df',roughness:.52,side:T.DoubleSide}));canopy.castShadow=true;scene.add(canopy);
 if(i%2===0)scene.add(B(.72,.72,.16,M('#383d40',.6,.4),px,5.25,front+.22),C(.22,.06,M('#111'),px,5.25,front+.33));}
 roof(x,w,z,depth);
 }
 // Large editable warehouse with two neighboring units, matching the connected industrial block.
-unit(0,60,-6,30,10);unit(62,44,-6,30,7);unit(-47,45,-6,30,7);
-for(const [x,z] of [[65,24.6],[74,24.6],[88,24.6],[-38,24.6],[-26,24.6]]){scene.add(B(1.2,.8,.7,M('#d6d5cf',.68),x,2.5,z),B(.85,.4,.08,dark,x,2.5,z+.38));for(let j=0;j<4;j++)scene.add(B(.04,.36,.03,rib,x-.27+j*.18,2.5,z+.44))}
+unit(0,60,0,30,10,[2,6,10,14,18,45.2,48.5,51.8,55.1,58.4]);unit(62,44,0,30,7);unit(-47,45,0,30,7);
+for(const [x,z] of [[65,30.6],[74,30.6],[88,30.6],[-38,30.6],[-26,30.6]]){scene.add(B(1.2,.8,.7,M('#d6d5cf',.68),x,2.5,z),B(.85,.4,.08,dark,x,2.5,z+.38));for(let j=0;j<4;j++)scene.add(B(.04,.36,.03,rib,x-.27+j*.18,2.5,z+.44))}
 function sedan(x,z,color){const g=new T.Group(),body=M(color,.36,.2),glass=M('#263640',.12,.6),rub=M('#232426',.9);g.add(B(2.05,.62,4.5,body,0,.78,0),B(1.62,.72,2.1,body,0,1.38,-.15),B(1.45,.52,1.95,glass,0,1.42,-.13));for(const a of[-1,1])for(const b of[-1,1]){const t=new T.Mesh(UC,rub);t.scale.set(.34,.23,.34);t.rotation.z=Math.PI/2;t.position.set(a*1.02,.42,b*1.38);g.add(t)}g.position.set(x,0,z);scene.add(g)}sedan(23,35,'#aaa9a3');sedan(51,36,'#c4c3bd');
 // Timber utility poles and overhead wires run along the access street.
 const pole=M('#765f4a',.9),wireMat=M('#24272a',.5,.65),posts=[[-5,38],[24,38],[58,38],[91,38]];
